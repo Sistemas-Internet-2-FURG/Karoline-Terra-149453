@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda+SC:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cinzel:wght@400..900&family=Grey+Qo&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: black;
+}
+
+.header{
+    height: 10vh;
+    background-color: black;
+}
+.header ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 20px;
+}
+.header li {
+    list-style: none;
+}
+.header a {
+    text-decoration: none;
+    color: white;
+    font-family: "Bodoni Moda SC", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+ 
+.header a:hover {
+    color: #818181;
+    font-size: 18px;
+}
+
+.form-container {
+    background-color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.form-container h1 {
+    color: white;
+    font-family: "Bodoni Moda SC", serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.form-container form {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-container form input {
+    padding: 8px;
+}
+
+.form-container form select {
+    padding: 8px;
+}

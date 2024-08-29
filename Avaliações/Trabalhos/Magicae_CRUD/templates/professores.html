@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae | Professores</title>
+    <link rel="stylesheet" href="../static/styles.css">
+    <link rel="stylesheet" href="../static/professores.css">
+
+</head>
+<body>
+    <header class="bodoni-moda-sc-principal header">
+        <ul>
+            <li><a href="{{url_for('professores')}}">Professores</a></li>
+            <li><a href="{{url_for('alunos')}}">Alunos</a></li>
+            <li><a href="{{url_for('feiticos')}}">Feitiços</a></li>
+            <li><a href="{{url_for('disciplinas')}}">Disciplinas</a></li>
+        </ul>
+    </header>
+    <main class="professores_container">
+        <h1>Professores</h1>
+        <a class="adicionar_professor" href="{{url_for('adicionar_professor')}}"> + Adicionar novo professor</a>
+        
+        <div class="professores_cards">
+            {% for professor in professores %}
+            <div class="professor_card">
+                <h2>{{ professor.nome }}</h2>
+                <div>Idade: {{ professor.idade }}</div>
+                <div>Casa: {{ professor.casa_nome }}</div>
+                <div>Feitiço Favorito: {{ professor.feitico_favorito }}</div>
+                <div>Disciplina: {{ professor.disciplina_nome }}</div>
+                <div>Patrono: {{ professor.patrono }}</div>
+                <a href="{{ url_for('editar_professor', id=professor.id) }}">Editar</a>
+                <form action="{{ url_for('excluir_professor', id=professor.id) }}" method="post" style="display:inline;">
+                    <button type="submit">Excluir</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+</body>
+</html>

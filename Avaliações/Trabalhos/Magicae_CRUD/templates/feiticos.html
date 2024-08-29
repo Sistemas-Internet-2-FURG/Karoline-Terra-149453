@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae | Feitiços</title>
+    <link rel="stylesheet" href="../static/styles.css">
+    <link rel="stylesheet" href="../static/feiticos.css">
+
+</head>
+
+<body>
+    <header class="bodoni-moda-sc-principal header">
+        <ul>
+            <li><a href="{{url_for('professores')}}">Professores</a></li>
+            <li><a href="{{url_for('alunos')}}">Alunos</a></li>
+            <li><a href="{{url_for('feiticos')}}">Feitiços</a></li>
+            <li><a href="{{url_for('disciplinas')}}">Disciplinas</a></li>
+        </ul>
+    </header>
+    <main class="feiticos_container">
+        <h1>Feiticos</h1>
+        <a class="adicionar_feitico" href="{{url_for('adicionar_feitico')}}"> + Adicionar novo feitiço</a>
+
+        <div class="feiticos_tabela">
+            <table>
+                <tr>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Ações</th>
+                </tr>
+                {%for feitico in feiticos%}
+                <tr>
+                    <td>{{feitico.nome}}</td>
+                    <td>{{feitico.descricao}}</td>
+                    <td><a href="{{ url_for('editar_feitico', id=feitico.id) }}">Editar</a>
+                        <form action="{{ url_for('excluir_feitico', id=feitico.id) }}" method="post"
+                            style="display:inline;">
+                            <button type="submit">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {%endfor%}
+            </table>
+        </div>
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae | Editar Aluno</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <header class="bodoni-moda-sc-principal header">
+        <ul>
+            <li><a href="{{url_for('professores')}}">Professores</a></li>
+            <li><a href="{{url_for('alunos')}}">Alunos</a></li>
+            <li><a href="{{url_for('feiticos')}}">Feitiços</a></li>
+            <li><a href="{{url_for('disciplinas')}}">Disciplinas</a></li>
+        </ul>
+    </header>
+    <div class="form-container">
+        <h1>Editar Aluno</h1>
+
+        <form method="POST">
+            <label for="nome">Nome:</label><br>
+            <input type="text" id="nome" name="nome" value="{{ aluno.nome }}"><br>
+            <label for="data_nascimento">Data de Nascimento:</label><br>
+            <input type="date" id="data_nascimento" name="data_nascimento" value="{{ aluno.data_nascimento }}"><br>
+            <label for="casa_id">Casa:</label><br>
+            <select id="casa_id" name="casa_id">
+                {% for casa in casas %}
+                    <option value="{{ casa.id }}" {% if casa.id == aluno.casa_id %}selected{% endif %}>{{ casa.nome }}</option>
+                {% endfor %}
+            </select><br>
+            <label for="feitico_favorito_id">Feitiço Favorito:</label><br>
+            <select id="feitico_favorito_id" name="feitico_favorito_id">
+                {% for feitico in feiticos %}
+                    <option value="{{ feitico.id }}" {% if feitico.id == aluno.feitico_favorito_id %}selected{% endif %}>{{ feitico.nome }}</option>
+                {% endfor %}
+            </select><br>
+            <label for="disciplina_id">Disciplina:</label><br>
+            <select id="disciplina_id" name="disciplina_id">
+                {% for disciplina in disciplinas %}
+                    <option value="{{ disciplina.id }}" {% if disciplina.id == aluno.disciplina_id %}selected{% endif %}>{{ disciplina.nome }}</option>
+                {% endfor %}
+            </select><br>
+            <label for="patrono">Patrono:</label><br>
+            <input type="text" id="patrono" name="patrono" value="{{ aluno.patrono }}"><br>
+            <input type="submit" value="Enviar">
+        </form>
+    </div>
+    
+</body>
+</html>

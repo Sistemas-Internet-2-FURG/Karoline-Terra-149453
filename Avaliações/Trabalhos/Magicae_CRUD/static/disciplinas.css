@@ -1,0 +1,47 @@
+.disciplinas_container {
+    background-color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.disciplinas_container h1{
+    color: white;
+    font-family: "Bodoni Moda SC", serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.adicionar_disciplina {
+    text-decoration: none;
+    background-color: white;
+    color: black;
+    padding: 20px;
+    font-family: "Bodoni Moda SC", serif;
+    font-weight: 700;
+    margin-bottom: 20px;
+    align-self: flex-start;
+}
+
+.disciplinas_tabela {
+    color: white;
+    font-family: "Bodoni Moda SC", serif;
+    font-weight: 700;
+}
+
+.disciplinas_tabela tr th {
+    padding: 8px;
+    font-size: 18px;
+}
+
+.disciplinas_tabela tr{
+    border: 1px solid white;
+}
+.disciplinas_tabela tr td {
+    padding: 8px;
+}

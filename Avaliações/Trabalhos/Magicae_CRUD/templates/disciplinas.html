@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae | Disciplinas</title>
+    <link rel="stylesheet" href="../static/styles.css">
+    <link rel="stylesheet" href="../static/disciplinas.css">
+
+</head>
+
+<body>
+    <header class="bodoni-moda-sc-principal header">
+        <ul>
+            <li><a href="{{url_for('professores')}}">Professores</a></li>
+            <li><a href="{{url_for('alunos')}}">Alunos</a></li>
+            <li><a href="{{url_for('feiticos')}}">Feitiços</a></li>
+            <li><a href="{{url_for('disciplinas')}}">Disciplinas</a></li>
+        </ul>
+    </header>
+    <main class="disciplinas_container">
+        <h1>Disciplinas</h1>
+        <a class="adicionar_disciplina" href="{{url_for('adicionar_disciplina')}}"> + Adicionar novo feitiço</a>
+
+        <div class="disciplinas_tabela">
+            <table>
+                <tr>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Ações</th>
+                </tr>
+                {%for disciplina in disciplinas%}
+                <tr>
+                    <td>{{disciplina.nome}}</td>
+                    <td>{{disciplina.descricao}}</td>
+                    <td><a href="{{ url_for('editar_disciplina', id=disciplina.id) }}">Editar</a>
+                        <form action="{{ url_for('excluir_disciplina', id=disciplina.id) }}" method="post"
+                            style="display:inline;">
+                            <button type="submit">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {%endfor%}
+            </table>
+        </div>
+    </main>
+
+</body>
+
+</html>

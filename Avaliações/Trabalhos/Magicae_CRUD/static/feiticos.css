@@ -1,0 +1,47 @@
+.feiticos_container {
+    background-color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.feiticos_container h1{
+    color: white;
+    font-family: "Bodoni Moda SC", serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.adicionar_feitico {
+    text-decoration: none;
+    background-color: white;
+    color: black;
+    padding: 20px;
+    font-family: "Bodoni Moda SC", serif;
+    font-weight: 700;
+    margin-bottom: 20px;
+    align-self: flex-start;
+}
+
+.feiticos_tabela {
+    color: white;
+    font-family: "Bodoni Moda SC", serif;
+    font-weight: 700;
+}
+
+.feiticos_tabela tr th {
+    padding: 8px;
+    font-size: 18px;
+}
+
+.feiticos_tabela tr{
+    border: 1px solid white;
+}
+.feiticos_tabela tr td {
+    padding: 8px;
+}
