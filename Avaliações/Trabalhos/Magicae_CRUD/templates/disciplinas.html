@@ -18,28 +18,35 @@
             <li><a href="{{url_for('feiticos')}}">Feitiços</a></li>
             <li><a href="{{url_for('disciplinas')}}">Disciplinas</a></li>
         </ul>
+        <a href="{{url_for('logout')}}">Sair</a>
     </header>
     <main class="disciplinas_container">
         <h1>Disciplinas</h1>
+        {% if user_type == 'professor' %}
         <a class="adicionar_disciplina" href="{{url_for('adicionar_disciplina')}}"> + Adicionar novo feitiço</a>
+        {% endif %}
 
         <div class="disciplinas_tabela">
             <table>
                 <tr>
                     <th>Nome</th>
                     <th>Descrição</th>
+                    {% if user_type == 'professor' %}
                     <th>Ações</th>
+                    {% endif %}
                 </tr>
                 {%for disciplina in disciplinas%}
                 <tr>
                     <td>{{disciplina.nome}}</td>
                     <td>{{disciplina.descricao}}</td>
+                    {% if user_type == 'professor' %}
                     <td><a href="{{ url_for('editar_disciplina', id=disciplina.id) }}">Editar</a>
                         <form action="{{ url_for('excluir_disciplina', id=disciplina.id) }}" method="post"
                             style="display:inline;">
                             <button type="submit">Excluir</button>
                         </form>
                     </td>
+                    {% endif %}
                 </tr>
                 {%endfor%}
             </table>

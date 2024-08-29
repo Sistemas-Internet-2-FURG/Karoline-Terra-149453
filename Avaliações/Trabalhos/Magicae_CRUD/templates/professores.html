@@ -16,10 +16,13 @@
             <li><a href="{{url_for('feiticos')}}">Feitiços</a></li>
             <li><a href="{{url_for('disciplinas')}}">Disciplinas</a></li>
         </ul>
+        <a class="logout-link" href="{{url_for('logout')}}">Sair</a>
     </header>
     <main class="professores_container">
         <h1>Professores</h1>
+        {% if user_type == 'professor' %}
         <a class="adicionar_professor" href="{{url_for('adicionar_professor')}}"> + Adicionar novo professor</a>
+        {% endif %}
         
         <div class="professores_cards">
             {% for professor in professores %}
@@ -30,10 +33,12 @@
                 <div>Feitiço Favorito: {{ professor.feitico_favorito }}</div>
                 <div>Disciplina: {{ professor.disciplina_nome }}</div>
                 <div>Patrono: {{ professor.patrono }}</div>
+                {% if user_type == 'professor' %}
                 <a href="{{ url_for('editar_professor', id=professor.id) }}">Editar</a>
                 <form action="{{ url_for('excluir_professor', id=professor.id) }}" method="post" style="display:inline;">
                     <button type="submit">Excluir</button>
                 </form>
+                {% endif %}
             </div>
             {% endfor %}
         </div>

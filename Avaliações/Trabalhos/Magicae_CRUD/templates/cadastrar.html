@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae | Cadastro</title>
+</head>
+<body>
+    <form method="POST" action="{{ url_for('cadastrar') }}">
+        <label for="username">Usuário:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Senha:</label>
+        <input type="password" id="password" name="password" required>
+        <label for="user_type">Tipo:</label>
+        <select id="user_type" name="user_type">
+            <option value="professor">Professor</option>
+            <option value="aluno">Aluno</option>
+        </select>
+        <button type="submit">Cadastrar</button>
+    </form>
+</body>
+</html>

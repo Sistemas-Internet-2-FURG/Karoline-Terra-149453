@@ -1,9 +1,33 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from datetime import datetime
 from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+class User(UserMixin):
+    def __init__(self, id, username, user_type):
+        self.id = id
+        self.username = username
+        self.user_type = user_type
+
+@login_manager.user_loader
+def load_user(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('SELECT * FROM usuarios WHERE id = %s', (user_id,))
+    user = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    if user:
+        return User(user['id'], user['username'], user['user_type'])
+    return None
 
 def get_db_connection():
     return mysql.connector.connect(
@@ -13,11 +37,54 @@ def get_db_connection():
         database=MYSQL_DB
     )
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM usuarios WHERE username = %s', (username,))
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if user and check_password_hash(user['password'], password):
+            user_obj = User(user['id'], user['username'], user['user_type'])
+            login_user(user_obj)
+            return redirect(url_for('index'))
+        flash('Invalid username or password')
+    return render_template('login.html')
+
+@app.route('/cadastrar', methods=['GET', 'POST'])
+def cadastrar():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user_type = request.form['user_type']
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO usuarios (username, password, user_type) VALUES (%s, %s, %s)',
+                       (username, hashed_password, user_type))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return redirect(url_for('login'))
+    return render_template('cadastrar.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
 @app.route('/')
+@login_required
 def index():
-    return render_template('index.html')
+    return render_template('index.html', user_type=current_user.user_type)
 
 @app.route('/professores')
+@login_required
 def professores():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -48,10 +115,13 @@ def professores():
     cursor.close()
     conn.close()
     
-    return render_template('professores.html', professores=professores)
+    return render_template('professores.html', professores=professores, user_type=current_user.user_type)
 
 @app.route('/adicionar_professor', methods=('GET', 'POST'))
+@login_required
 def adicionar_professor():
+    if current_user.user_type != 'professor':
+        return "Acesso negado"
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -83,7 +153,10 @@ def adicionar_professor():
 
 
 @app.route('/editar_professor/<int:id>', methods=('GET', 'POST'))
+@login_required
 def editar_professor(id):
+    if current_user.user_type != 'professor':
+        return "Acesso negado"
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -117,7 +190,10 @@ def editar_professor(id):
 
 
 @app.route('/excluir_professor/<int:id>', methods=('POST',))
+@login_required
 def excluir_professor(id):
+    if current_user.user_type != 'professor':
+        return "Acesso negado"
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('DELETE FROM professores WHERE id = %s', (id,))
@@ -127,6 +203,7 @@ def excluir_professor(id):
     return redirect(url_for('professores'))
 
 @app.route('/alunos')
+@login_required
 def alunos():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -157,10 +234,13 @@ def alunos():
     cursor.close()
     conn.close()
     
-    return render_template('alunos.html', alunos=alunos)
+    return render_template('alunos.html', alunos=alunos, user_type=current_user.user_type)
 
 @app.route('/adicionar_aluno', methods=('GET', 'POST'))
+@login_required
 def adicionar_aluno():
+    if current_user.user_type != 'professor':
+        return "Acesso negado"
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -190,7 +270,10 @@ def adicionar_aluno():
         return render_template('adicionar_aluno.html', casas=casas, feiticos=feiticos, disciplinas=disciplinas)
 
 @app.route('/editar_aluno/<int:id>', methods=('GET', 'POST'))
+@login_required
 def editar_aluno(id):
+    if current_user.user_type != 'professor':
+        return "Acesso negado"
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -223,7 +306,10 @@ def editar_aluno(id):
         return render_template('editar_aluno.html', aluno=aluno, casas=casas, feiticos=feiticos, disciplinas=disciplinas)
 
 @app.route('/excluir_aluno/<int:id>', methods=('POST',))
+@login_required
 def excluir_aluno(id):
+    if current_user.user_type != 'professor':
+        return "Acesso negado"
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('DELETE FROM alunos WHERE id = %s', (id,))
@@ -234,6 +320,7 @@ def excluir_aluno(id):
 
 
 @app.route('/feiticos')
+@login_required
 def feiticos():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -247,11 +334,14 @@ def feiticos():
     cursor.close()
     conn.close()
     
-    return render_template('feiticos.html', feiticos=feiticos)
+    return render_template('feiticos.html', feiticos=feiticos, user_type=current_user.user_type)
 
 
 @app.route('/adicionar_feitico', methods=('GET', 'POST'))
+@login_required
 def adicionar_feitico():
+    if current_user.user_type != 'professor':
+        return "Acesso negado"    
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -273,7 +363,10 @@ def adicionar_feitico():
         return render_template('adicionar_feitico.html',feiticos=feiticos)
 
 @app.route('/editar_feitico/<int:id>', methods=('GET', 'POST'))
+@login_required
 def editar_feitico(id):
+    if current_user.user_type != 'professor':
+        return "Acesso negado"
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -298,7 +391,10 @@ def editar_feitico(id):
         return render_template('editar_feitico.html', feiticos=feiticos, feitico=feitico)
 
 @app.route('/excluir_feitico/<int:id>', methods=('POST',))
+@login_required
 def excluir_feitico(id):
+    if current_user.user_type != 'professor':
+        return "Acesso negado"
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
@@ -322,6 +418,7 @@ def excluir_feitico(id):
 
 
 @app.route('/disciplinas')
+@login_required
 def disciplinas():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -335,11 +432,14 @@ def disciplinas():
     cursor.close()
     conn.close()
     
-    return render_template('disciplinas.html', disciplinas=disciplinas)
+    return render_template('disciplinas.html', disciplinas=disciplinas, user_type=current_user.user_type)
 
 
 @app.route('/adicionar_disciplina', methods=('GET', 'POST'))
+@login_required
 def adicionar_disciplina():
+    if current_user.user_type != 'professor':
+        return "Acesso negado"    
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -361,7 +461,10 @@ def adicionar_disciplina():
         return render_template('adicionar_disciplina.html',disciplinas=disciplinas)
 
 @app.route('/editar_disciplina/<int:id>', methods=('GET', 'POST'))
+@login_required
 def editar_disciplina(id):
+    if current_user.user_type != 'professor':
+        return "Acesso negado"
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -386,7 +489,10 @@ def editar_disciplina(id):
         return render_template('editar_disciplina.html', disciplinas=disciplinas, disciplina=disciplina)
 
 @app.route('/excluir_disciplina/<int:id>', methods=('POST',))
+@login_required
 def excluir_disciplina(id):
+    if current_user.user_type != 'professor':
+        return "Acesso negado"
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     

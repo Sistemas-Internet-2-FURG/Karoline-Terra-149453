@@ -18,11 +18,13 @@
             <li><a href="{{url_for('feiticos')}}">Feitiços</a></li>
             <li><a href="{{url_for('disciplinas')}}">Disciplinas</a></li>
         </ul>
+        <a href="{{url_for('logout')}}">Sair</a>
     </header>
     <main class="feiticos_container">
         <h1>Feiticos</h1>
+        {% if user_type == 'professor' %}
         <a class="adicionar_feitico" href="{{url_for('adicionar_feitico')}}"> + Adicionar novo feitiço</a>
-
+        {% endif %}
         <div class="feiticos_tabela">
             <table>
                 <tr>
@@ -34,12 +36,15 @@
                 <tr>
                     <td>{{feitico.nome}}</td>
                     <td>{{feitico.descricao}}</td>
+                    {% if user_type == 'professor' %}
+
                     <td><a href="{{ url_for('editar_feitico', id=feitico.id) }}">Editar</a>
                         <form action="{{ url_for('excluir_feitico', id=feitico.id) }}" method="post"
                             style="display:inline;">
                             <button type="submit">Excluir</button>
                         </form>
                     </td>
+                    {% endif %}
                 </tr>
                 {%endfor%}
             </table>
