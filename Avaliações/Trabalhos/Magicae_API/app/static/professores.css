@@ -1,0 +1,59 @@
+.professores_container {
+    background-color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.professores_container h1{
+    color: white;
+    font-family: "Bodoni Moda SC", serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.professores_cards {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 28px;
+}
+
+.professor_card {
+    background-color: white;
+    padding: 8px;
+    border-radius: 4px;
+    width: 270px;
+}
+.professor_card h2 {
+    font-family: "Bodoni Moda SC", serif;
+    font-weight: 700;
+    font-style: normal;
+}
+
+.adicionar_professor {
+    text-decoration: none;
+    background-color: white;
+    color: black;
+    padding: 20px;
+    font-family: "Bodoni Moda SC", serif;
+    font-weight: 700;
+    margin-bottom: 20px;
+    align-self: flex-start;
+}
+.adicionar_professor:hover {
+    background-color: rgb(134, 134, 134);
+}
+
+.professor_card div {
+    font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}

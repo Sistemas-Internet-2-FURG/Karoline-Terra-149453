@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae</title>
+    <link rel="stylesheet" href="../static/styles.css">
+    <link rel="stylesheet" href="../static/index.css">
+
+</head>
+<body>
+    <header class="bodoni-moda-sc-principal header">
+        <ul>
+            <li><a href="{{url_for('professores')}}">Professores</a></li>
+            <li><a href="{{url_for('alunos')}}">Alunos</a></li>
+            <li><a href="{{url_for('feiticos')}}">Feitiços</a></li>
+            <li><a href="{{url_for('disciplinas')}}">Disciplinas</a></li>
+        </ul>
+        <a href="{{url_for('logout')}}">Sair</a>
+    </header>
+    <main class="slogan_area">
+        <h1 class="bodoni-moda-sc-principal">Magicae</h1>
+        <h2>Onde o Mundo Bruxo Ganha Vida.</h2> 
+        <p>Descubra, explore e registre os segredos do universo bruxo em um só lugar.</p>
+    </main>
+
+</body>
+</html>

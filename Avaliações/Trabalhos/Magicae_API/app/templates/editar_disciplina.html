@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae | Editar Disciplina</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header class="bodoni-moda-sc-principal header">
+        <ul>
+            <li><a href="/professores">Professores</a></li>
+            <li><a href="/alunos">Alunos</a></li>
+            <li><a href="/feiticos">Feitiços</a></li>
+            <li><a href="/disciplinas">Disciplinas</a></li>
+        </ul>
+        <a href="/logout">Sair</a>
+    </header>
+    <div class="form-container">
+        <h1>Editar Disciplina</h1>
+
+        <form id="editar-disciplina-form">
+            <label for="nome">Nome:</label><br>
+            <input type="text" id="nome" name="nome"><br>
+            <label for="descricao">Descrição:</label><br>
+            <input type="text" id="descricao" name="descricao"><br>
+            <input type="submit" value="Enviar">
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const disciplinaId = window.location.pathname.split('/').pop(); 
+
+            fetch(`/api/disciplinas/${disciplinaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('nome').value = data.nome;
+                    document.getElementById('descricao').value = data.descricao;
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar os dados da disciplina:', error);
+                });
+
+            document.getElementById('editar-disciplina-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const disciplina = {
+                    nome: document.getElementById('nome').value,
+                    descricao: document.getElementById('descricao').value
+                };
+
+                fetch(`/api/disciplinas/${disciplinaId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(disciplina)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Disciplina atualizada com sucesso!');
+                    window.location.href = '/disciplinas'; 
+                })
+                .catch(error => {
+                    console.error('Erro ao atualizar disciplina:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

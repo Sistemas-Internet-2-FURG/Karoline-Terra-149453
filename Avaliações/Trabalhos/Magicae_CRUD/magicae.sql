@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 29/08/2024 às 12:58
+-- Tempo de geração: 05/09/2024 às 02:24
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -210,6 +210,27 @@ INSERT INTO `professores` (`id`, `nome`, `data_nascimento`, `casa_id`, `feitico_
 (5, 'Sybill Trelawney', '1964-03-09', 3, 12, 10, 'Águia'),
 (6, 'Rubeus Hagrid', '1928-12-06', 1, 7, 11, 'Dragão');
 
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `usuarios`
+--
+
+CREATE TABLE `usuarios` (
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `user_type` enum('professor','aluno') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `usuarios`
+--
+
+INSERT INTO `usuarios` (`id`, `username`, `password`, `user_type`) VALUES
+(1, 'Karol', 'pbkdf2:sha256:600000$ntrtduM7$94165df892431b7aefea2e6ccd9e668b7b3e5a80bb66b52105c690dff852389f', 'professor'),
+(2, 'Luna', 'pbkdf2:sha256:600000$JrAG2SHG$d66fd8c6b20ae4fa2e1fb8c540cdbf3c9344ff3cf0bfaeac8ee67bfb5a81bc5e', 'aluno');
+
 --
 -- Índices para tabelas despejadas
 --
@@ -263,6 +284,13 @@ ALTER TABLE `professores`
   ADD KEY `disciplina_id` (`disciplina_id`);
 
 --
+-- Índices de tabela `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
 -- AUTO_INCREMENT para tabelas despejadas
 --
 
@@ -307,6 +335,12 @@ ALTER TABLE `livros`
 --
 ALTER TABLE `professores`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT de tabela `usuarios`
+--
+ALTER TABLE `usuarios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restrições para tabelas despejadas

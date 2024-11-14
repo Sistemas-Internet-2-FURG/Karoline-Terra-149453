@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae | Adicionar Aluno</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header class="bodoni-moda-sc-principal header">
+        <ul>
+            <li><a href="/professores">Professores</a></li>
+            <li><a href="/alunos">Alunos</a></li>
+            <li><a href="/feiticos">Feitiços</a></li>
+            <li><a href="/disciplinas">Disciplinas</a></li>
+        </ul>
+        <a href="/logout">Sair</a>
+    </header>
+    <div class="form-container">
+        <h1>Adicionar Aluno</h1>
+
+        <form id="adicionar-aluno-form">
+            <label for="nome">Nome:</label><br>
+            <input type="text" id="nome" name="nome"><br>
+            <label for="data_nascimento">Data de Nascimento:</label><br>
+            <input type="date" id="data_nascimento" name="data_nascimento"><br>
+            <label for="casa_id">Casa:</label><br>
+            <select id="casa_id" name="casa_id"></select><br>
+            <label for="feitico_favorito_id">Feitiço Favorito:</label><br>
+            <select id="feitico_favorito_id" name="feitico_favorito_id"></select><br>
+            <label for="disciplina_id">Disciplina:</label><br>
+            <select id="disciplina_id" name="disciplina_id"></select><br>
+            <label for="patrono">Patrono:</label><br>
+            <input type="text" id="patrono" name="patrono"><br>
+            <input type="submit" value="Enviar">
+        </form>
+    </div>
+
+    <script>
+        function preencherSelect(url, selectId) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById(selectId);
+                    select.innerHTML = '';
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.text = item.nome;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error(`Erro ao carregar dados para ${selectId}:`, error);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            preencherSelect('/api/casas', 'casa_id');
+            preencherSelect('/api/feiticos', 'feitico_favorito_id');
+            preencherSelect('/api/disciplinas', 'disciplina_id');
+
+            // Submeter o formulário para adicionar aluno
+            document.getElementById('adicionar-aluno-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const aluno = {
+                    nome: document.getElementById('nome').value,
+                    data_nascimento: document.getElementById('data_nascimento').value,
+                    casa_id: document.getElementById('casa_id').value,
+                    feitico_favorito_id: document.getElementById('feitico_favorito_id').value,
+                    disciplina_id: document.getElementById('disciplina_id').value,
+                    patrono: document.getElementById('patrono').value
+                };
+
+                fetch('/api/alunos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(aluno)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Aluno adicionado com sucesso!');
+                    window.location.href = '/alunos'; 
+                })
+                .catch(error => {
+                    console.error('Erro ao adicionar aluno:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

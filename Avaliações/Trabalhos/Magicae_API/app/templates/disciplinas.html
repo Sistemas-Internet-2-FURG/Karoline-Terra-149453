@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae | Disciplinas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='disciplinas.css') }}">
+</head>
+
+<body>
+    <header class="bodoni-moda-sc-principal header">
+        <ul>
+            <li><a href="/professores">Professores</a></li>
+            <li><a href="/alunos">Alunos</a></li>
+            <li><a href="/feiticos">Feitiços</a></li>
+            <li><a href="/disciplinas">Disciplinas</a></li>
+        </ul>
+        <a href="/logout">Sair</a>
+    </header>
+    <main class="disciplinas_container">
+        <h1>Disciplinas</h1>
+        {% if user_type == 'professor' %}
+        <a class="adicionar_disciplina" href="/adicionar_disciplina"> + Adicionar nova disciplina</a>
+        {% endif %}
+
+        <div class="disciplinas_tabela">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        {% if user_type == 'professor' %}
+                        <th>Ações</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody id="disciplinas-tabela-body">
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        function carregarDisciplinas() {
+            fetch('/api/disciplinas')
+                .then(response => response.json())
+                .then(data => {
+                    const tabelaBody = document.getElementById('disciplinas-tabela-body');
+                    tabelaBody.innerHTML = ''; 
+
+                    data.forEach(disciplina => {
+                        const row = document.createElement('tr');
+
+                        row.innerHTML = `
+                            <td>${disciplina.nome}</td>
+                            <td>${disciplina.descricao}</td>
+                            {% if user_type == 'professor' %}
+                            <td>
+                                <a href="/editar_disciplina/${disciplina.id}">Editar</a>
+                                <button onclick="excluirDisciplina(${disciplina.id})">Excluir</button>
+                            </td>
+                            {% endif %}
+                        `;
+                        tabelaBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar as disciplinas:', error);
+                });
+        }
+
+        function excluirDisciplina(disciplinaId) {
+            if (confirm('Tem certeza que deseja excluir esta disciplina?')) {
+                fetch(`/api/disciplinas/${disciplinaId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Disciplina excluída com sucesso!');
+                    carregarDisciplinas(); 
+                })
+                .catch(error => {
+                    console.error('Erro ao excluir disciplina:', error);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', carregarDisciplinas);
+    </script>
+</body>
+</html>

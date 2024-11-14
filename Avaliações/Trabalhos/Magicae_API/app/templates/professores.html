@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae | Professores</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='professores.css') }}">
+</head>
+<body>
+    <header class="bodoni-moda-sc-principal header">
+        <ul>
+            <li><a href="/professores">Professores</a></li>
+            <li><a href="/alunos">Alunos</a></li>
+            <li><a href="/feiticos">Feitiços</a></li>
+            <li><a href="/disciplinas">Disciplinas</a></li>
+        </ul>
+        <a class="logout-link" href="/logout">Sair</a>
+    </header>
+    <main class="professores_container">
+        <h1>Professores</h1>
+        {% if user_type == 'professor' %}
+        <a class="adicionar_professor" href="/adicionar_professor"> + Adicionar novo professor</a>
+        {% endif %}
+
+        <div class="professores_cards" id="professores-cards">
+        </div>
+    </main>
+
+    <script>
+        function carregarProfessores() {
+            fetch('/api/professores')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('professores-cards');
+                    container.innerHTML = ''; 
+
+                    data.forEach(professor => {
+                        const card = document.createElement('div');
+                        card.className = 'professor_card';
+
+                        card.innerHTML = `
+                            <h2>${professor.nome}</h2>
+                            <div>Data de Nascimento: ${new Date(professor.data_nascimento).toLocaleDateString('pt-BR')}</div>
+                            <div>Casa: ${professor.casa_id}</div>
+                            <div>Feitiço Favorito: ${professor.feitico_favorito_id}</div>
+                            <div>Disciplina: ${professor.disciplina_id}</div>
+                            <div>Patrono: ${professor.patrono}</div>
+                            {% if user_type == 'professor' %}
+                            <a href="/editar_professor/${professor.id}">Editar</a>
+                            <button onclick="excluirProfessor(${professor.id})">Excluir</button>
+                            {% endif %}
+                        `;
+                        container.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar os professores:', error);
+                });
+        }
+
+        function excluirProfessor(professorId) {
+            if (confirm('Tem certeza que deseja excluir este professor?')) {
+                fetch(`/api/professores/${professorId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Professor excluído com sucesso!');
+                    carregarProfessores(); 
+                })
+                .catch(error => {
+                    console.error('Erro ao excluir professor:', error);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', carregarProfessores);
+    </script>
+</body>
+</html>

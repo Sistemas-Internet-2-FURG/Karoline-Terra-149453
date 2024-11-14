@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae | Feitiços</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='feiticos.css') }}">
+</head>
+
+<body>
+    <header class="bodoni-moda-sc-principal header">
+        <ul>
+            <li><a href="/professores">Professores</a></li>
+            <li><a href="/alunos">Alunos</a></li>
+            <li><a href="/feiticos">Feitiços</a></li>
+            <li><a href="/disciplinas">Disciplinas</a></li>
+        </ul>
+        <a href="/logout">Sair</a>
+    </header>
+    <main class="feiticos_container">
+        <h1>Feitiços</h1>
+        {% if user_type == 'professor' %}
+        <a class="adicionar_feitico" href="/adicionar_feitico"> + Adicionar novo feitiço</a>
+        {% endif %}
+        <div class="feiticos_tabela">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="feiticos-tabela-body">
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        function carregarFeiticos() {
+            fetch('/api/feiticos')
+                .then(response => response.json())
+                .then(data => {
+                    const tabelaBody = document.getElementById('feiticos-tabela-body');
+                    tabelaBody.innerHTML = ''; 
+
+                    data.forEach(feitico => {
+                        const row = document.createElement('tr');
+
+                        row.innerHTML = `
+                            <td>${feitico.nome}</td>
+                            <td>${feitico.descricao}</td>
+                            {% if user_type == 'professor' %}
+                            <td>
+                                <a href="/editar_feitico/${feitico.id}">Editar</a>
+                                <button onclick="excluirFeitico(${feitico.id})">Excluir</button>
+                            </td>
+                            {% endif %}
+                        `;
+                        tabelaBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar os feitiços:', error);
+                });
+        }
+
+        function excluirFeitico(feiticoId) {
+            if (confirm('Tem certeza que deseja excluir este feitiço?')) {
+                fetch(`/api/feiticos/${feiticoId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Feitiço excluído com sucesso!');
+                    carregarFeiticos(); 
+                })
+                .catch(error => {
+                    console.error('Erro ao excluir feitiço:', error);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', carregarFeiticos);
+    </script>
+</body>
+
+</html>

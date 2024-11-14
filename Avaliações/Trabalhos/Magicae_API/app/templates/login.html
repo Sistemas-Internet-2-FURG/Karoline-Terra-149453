@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae | Login</title>
+</head>
+<body>
+    <form method="POST" action="{{ url_for('login') }}">
+        <label for="username">Usuário:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Senha:</label>
+        <input type="password" id="password" name="password" required>
+        <p>Não possui uma conta? <a href="{{url_for('cadastrar')}}">Clique aqui para cadastrar-se!</a></p>
+        <button type="submit">Acessar</button>
+    </form>
+    

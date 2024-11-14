@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magicae | Adicionar Feitiço</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header class="bodoni-moda-sc-principal header">
+        <ul>
+            <li><a href="/professores">Professores</a></li>
+            <li><a href="/alunos">Alunos</a></li>
+            <li><a href="/feiticos">Feitiços</a></li>
+            <li><a href="/disciplinas">Disciplinas</a></li>
+        </ul>
+        <a href="/logout">Sair</a>
+    </header>
+    <div class="form-container">
+        <h1>Adicionar Feitiço</h1>
+
+        <form id="adicionar-feitico-form">
+            <label for="nome">Nome:</label><br>
+            <input type="text" id="nome" name="nome"><br>
+            <label for="descricao">Descrição:</label><br>
+            <input type="text" id="descricao" name="descricao"><br>
+            <input type="submit" value="Enviar">
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('adicionar-feitico-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const feitico = {
+                    nome: document.getElementById('nome').value,
+                    descricao: document.getElementById('descricao').value
+                };
+
+                fetch('/api/feiticos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(feitico)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Feitiço adicionado com sucesso!');
+                    window.location.href = '/feiticos'; 
+                })
+                .catch(error => {
+                    console.error('Erro ao adicionar feitiço:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
