@@ -43,39 +43,59 @@
 
     <script>
         function carregarDisciplinas() {
-            fetch('/api/disciplinas')
-                .then(response => response.json())
-                .then(data => {
-                    const tabelaBody = document.getElementById('disciplinas-tabela-body');
-                    tabelaBody.innerHTML = ''; 
+            const token = localStorage.getItem('access_token');
+            fetch('/api/disciplinas', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar as disciplinas: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tabelaBody = document.getElementById('disciplinas-tabela-body');
+                tabelaBody.innerHTML = ''; 
 
-                    data.forEach(disciplina => {
-                        const row = document.createElement('tr');
+                data.forEach(disciplina => {
+                    const row = document.createElement('tr');
 
-                        row.innerHTML = `
-                            <td>${disciplina.nome}</td>
-                            <td>${disciplina.descricao}</td>
-                            {% if user_type == 'professor' %}
-                            <td>
-                                <a href="/editar_disciplina/${disciplina.id}">Editar</a>
-                                <button onclick="excluirDisciplina(${disciplina.id})">Excluir</button>
-                            </td>
-                            {% endif %}
-                        `;
-                        tabelaBody.appendChild(row);
-                    });
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar as disciplinas:', error);
+                    row.innerHTML = `
+                        <td>${disciplina.nome}</td>
+                        <td>${disciplina.descricao}</td>
+                        {% if user_type == 'professor' %}
+                        <td>
+                            <a href="/editar_disciplina/${disciplina.id}">Editar</a>
+                            <button onclick="excluirDisciplina(${disciplina.id})">Excluir</button>
+                        </td>
+                        {% endif %}
+                    `;
+                    tabelaBody.appendChild(row);
                 });
+            })
+            .catch(error => {
+                console.error('Erro ao carregar as disciplinas:', error);
+            });
         }
 
         function excluirDisciplina(disciplinaId) {
+            const token = localStorage.getItem('access_token');
             if (confirm('Tem certeza que deseja excluir esta disciplina?')) {
                 fetch(`/api/disciplinas/${disciplinaId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao excluir disciplina: ' + response.statusText);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     alert('Disciplina excluída com sucesso!');
                     carregarDisciplinas(); 

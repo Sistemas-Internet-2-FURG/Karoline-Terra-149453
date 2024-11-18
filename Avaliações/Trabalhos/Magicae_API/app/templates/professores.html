@@ -29,48 +29,68 @@
 
     <script>
         function carregarProfessores() {
-            fetch('/api/professores')
-                .then(response => response.json())
-                .then(data => {
-                    const container = document.getElementById('professores-cards');
-                    container.innerHTML = ''; 
+            const token = localStorage.getItem('access_token');
+            fetch('/api/professores', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar os professores: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const container = document.getElementById('professores-cards');
+                container.innerHTML = ''; 
 
-                    data.forEach(professor => {
-                        const card = document.createElement('div');
-                        card.className = 'professor_card';
+                data.forEach(professor => {
+                    const card = document.createElement('div');
+                    card.className = 'professor_card';
 
-                        card.innerHTML = `
-                            <h2>${professor.nome}</h2>
-                            <div>Data de Nascimento: ${new Date(professor.data_nascimento).toLocaleDateString('pt-BR')}</div>
-                            <div>Casa: ${professor.casa_id}</div>
-                            <div>Feitiço Favorito: ${professor.feitico_favorito_id}</div>
-                            <div>Disciplina: ${professor.disciplina_id}</div>
-                            <div>Patrono: ${professor.patrono}</div>
-                            {% if user_type == 'professor' %}
-                            <a href="/editar_professor/${professor.id}">Editar</a>
-                            <button onclick="excluirProfessor(${professor.id})">Excluir</button>
-                            {% endif %}
-                        `;
-                        container.appendChild(card);
-                    });
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar os professores:', error);
+                    card.innerHTML = `
+                        <h2>${professor.nome}</h2>
+                        <div>Data de Nascimento: ${new Date(professor.data_nascimento).toLocaleDateString('pt-BR')}</div>
+                        <div>Casa: ${professor.casa_nome}</div>
+                        <div>Feitiço Favorito: ${professor.feitico_favorito}</div>
+                        <div>Disciplina: ${professor.disciplina_nome}</div>
+                        <div>Patrono: ${professor.patrono}</div>
+                        {% if user_type == 'professor' %}
+                        <a href="/editar_professor/${professor.id}">Editar</a>
+                        <button onclick="excluirProfessor(${professor.id})">Excluir</button>
+                        {% endif %}
+                    `;
+                    container.appendChild(card);
                 });
+            })
+            .catch(error => {
+                console.error(error);
+            });
         }
 
         function excluirProfessor(professorId) {
+            const token = localStorage.getItem('access_token');
             if (confirm('Tem certeza que deseja excluir este professor?')) {
                 fetch(`/api/professores/${professorId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao excluir professor: ' + response.statusText);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     alert('Professor excluído com sucesso!');
                     carregarProfessores(); 
                 })
                 .catch(error => {
-                    console.error('Erro ao excluir professor:', error);
+                    console.error(error);
                 });
             }
         }

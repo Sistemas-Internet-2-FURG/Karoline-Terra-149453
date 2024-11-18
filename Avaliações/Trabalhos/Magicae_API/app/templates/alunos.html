@@ -28,48 +28,68 @@
 
     <script>
         function carregarAlunos() {
-            fetch('/api/alunos')
-                .then(response => response.json())
-                .then(data => {
-                    const container = document.getElementById('alunos-cards');
-                    container.innerHTML = '';
+            const token = localStorage.getItem('access_token');
+            fetch('/api/alunos', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar os alunos: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const container = document.getElementById('alunos-cards');
+                container.innerHTML = '';
 
-                    data.forEach(aluno => {
-                        const card = document.createElement('div');
-                        card.className = 'aluno_card';
+                data.forEach(aluno => {
+                    const card = document.createElement('div');
+                    card.className = 'aluno_card';
 
-                        card.innerHTML = `
-                            <h2>${aluno.nome}</h2>
-                            <div>Data de Nascimento: ${new Date(aluno.data_nascimento).toLocaleDateString('pt-BR')}</div>
-                            <div>Casa: ${aluno.casa_nome}</div>
-                            <div>Feitiço Favorito: ${aluno.feitico_favorito}</div>
-                            <div>Patrono: ${aluno.patrono}</div>
-                            <div>Disciplina Favorita: ${aluno.disciplina_nome}</div>
-                            {% if user_type == 'professor' %}
-                            <a href="/editar_aluno/${aluno.id}">Editar</a>
-                            <button onclick="excluirAluno(${aluno.id})">Excluir</button>
-                            {% endif %}
-                        `;
-                        container.appendChild(card);
-                    });
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar os alunos:', error);
+                    card.innerHTML = `
+                        <h2>${aluno.nome}</h2>
+                        <div>Data de Nascimento: ${new Date(aluno.data_nascimento).toLocaleDateString('pt-BR')}</div>
+                        <div>Casa: ${aluno.casa_nome}</div>
+                        <div>Feitiço Favorito: ${aluno.feitico_favorito}</div>
+                        <div>Patrono: ${aluno.patrono}</div>
+                        <div>Disciplina Favorita: ${aluno.disciplina_nome}</div>
+                        {% if user_type == 'professor' %}
+                        <a href="/editar_aluno/${aluno.id}">Editar</a>
+                        <button onclick="excluirAluno(${aluno.id})">Excluir</button>
+                        {% endif %}
+                    `;
+                    container.appendChild(card);
                 });
+            })
+            .catch(error => {
+                console.error(error);
+            });
         }
 
         function excluirAluno(alunoId) {
+            const token = localStorage.getItem('access_token');
             if (confirm('Tem certeza que deseja excluir este aluno?')) {
                 fetch(`/api/alunos/${alunoId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao excluir aluno: ' + response.statusText);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     alert('Aluno excluído com sucesso!');
                     carregarAlunos(); 
                 })
                 .catch(error => {
-                    console.error('Erro ao excluir aluno:', error);
+                    console.error(error);
                 });
             }
         }

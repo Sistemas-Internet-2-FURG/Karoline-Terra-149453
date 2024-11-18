@@ -4,19 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Magicae | Cadastro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <form method="POST" action="{{ url_for('cadastrar') }}">
-        <label for="username">Usuário:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Senha:</label>
-        <input type="password" id="password" name="password" required>
-        <label for="user_type">Tipo:</label>
-        <select id="user_type" name="user_type">
-            <option value="professor">Professor</option>
-            <option value="aluno">Aluno</option>
-        </select>
-        <button type="submit">Cadastrar</button>
-    </form>
+    <div class="form-container">
+        <h1>Cadastro</h1>
+        <form id="cadastrar-form">
+            <label for="username">Usuário:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required>
+            <label for="user_type">Tipo:</label>
+            <select id="user_type" name="user_type">
+                <option value="professor">Professor</option>
+                <option value="aluno">Aluno</option>
+            </select>
+            <button type="submit">Cadastrar</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('cadastrar-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const user = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                user_type: document.getElementById('user_type').value
+            };
+
+            fetch('/registro', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'User registered successfully') {
+                    alert('Cadastro realizado com sucesso!');
+                    window.location.href = '/login'; // Redireciona para a página de login
+                } else {
+                    alert('Erro no cadastro: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro no cadastro:', error);
+            });
+        });
+    </script>
 </body>
 </html>

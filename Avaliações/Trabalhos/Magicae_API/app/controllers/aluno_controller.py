@@ -1,8 +1,10 @@
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required
 from app import db
 from app.models import Alunos, Casas, Feiticos, Disciplinas
 from datetime import datetime
 
+@jwt_required()
 def listar_alunos():
     alunos = Alunos.query.all()
     resultado = []
@@ -22,6 +24,7 @@ def listar_alunos():
         })
     return jsonify(resultado)
 
+@jwt_required()
 def obter_aluno(aluno_id):
     aluno = Alunos.query.get(aluno_id)
     if not aluno:
@@ -44,6 +47,7 @@ def obter_aluno(aluno_id):
         'patrono': aluno.patrono
     })
 
+@jwt_required()
 def adicionar_aluno():
     data = request.get_json()
     novo_aluno = Alunos(
@@ -58,6 +62,7 @@ def adicionar_aluno():
     db.session.commit()
     return jsonify({'message': 'aluno adicionado com sucesso!'})
 
+@jwt_required()
 def editar_aluno(aluno_id):
     data = request.get_json()
     aluno = Alunos.query.get(aluno_id)
@@ -73,6 +78,7 @@ def editar_aluno(aluno_id):
     db.session.commit()
     return jsonify({'message': 'aluno editado com sucesso!'})
 
+@jwt_required()
 def excluir_aluno(aluno_id):
     aluno = Alunos.query.get(aluno_id)
     if not aluno:

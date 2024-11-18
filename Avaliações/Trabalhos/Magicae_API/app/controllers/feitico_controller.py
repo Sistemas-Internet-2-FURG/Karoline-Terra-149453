@@ -1,8 +1,9 @@
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required
 from app import db
 from app.models import Feiticos
-from datetime import datetime
 
+@jwt_required()
 def listar_feiticos():
     feiticos = Feiticos.query.all()
     return jsonify([{
@@ -11,6 +12,19 @@ def listar_feiticos():
         'descricao': feitico.descricao,
     } for feitico in feiticos])
 
+@jwt_required()
+def obter_feitico(feitico_id):
+    feitico = Feiticos.query.get(feitico_id)
+    if not feitico:
+        return jsonify({'message': 'feitico não encontrada'}), 404
+
+    return jsonify({
+        'id': feitico.id,
+        'nome': feitico.nome,
+        'descricao': feitico.descricao
+    })
+
+@jwt_required()
 def adicionar_feitico():
     data = request.get_json()
     novo_feitico = Feiticos(
@@ -21,6 +35,7 @@ def adicionar_feitico():
     db.session.commit()
     return jsonify({'message': 'feitico adicionado com sucesso!'})
 
+@jwt_required()
 def editar_feitico(feitico_id):
     data = request.get_json()
     feitico = Feiticos.query.get(feitico_id)
@@ -32,6 +47,7 @@ def editar_feitico(feitico_id):
     db.session.commit()
     return jsonify({'message': 'feitico editado com sucesso!'})
 
+@jwt_required()
 def excluir_feitico(feitico_id):
     feitico = Feiticos.query.get(feitico_id)
     if not feitico:

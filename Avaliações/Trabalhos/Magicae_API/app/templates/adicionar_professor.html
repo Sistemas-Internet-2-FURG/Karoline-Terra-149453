@@ -38,28 +38,32 @@
 
     <script>
         function preencherSelect(url, selectId) {
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const select = document.getElementById(selectId);
-                    select.innerHTML = '';
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.id;
-                        option.text = item.nome;
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error(`Erro ao carregar dados para ${selectId}:`, error);
+            const token = localStorage.getItem('access_token');
+            fetch(url, {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const select = document.getElementById(selectId);
+                select.innerHTML = '';
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.text = item.nome;
+                    select.appendChild(option);
                 });
+            })
+            .catch(error => {
+                console.error(`Erro ao carregar dados para ${selectId}:`, error);
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             preencherSelect('/api/casas', 'casa_id');
             preencherSelect('/api/feiticos', 'feitico_favorito_id');
             preencherSelect('/api/disciplinas', 'disciplina_id');
-
 
             document.getElementById('adicionar-professor-form').addEventListener('submit', function (e) {
                 e.preventDefault();
@@ -73,10 +77,12 @@
                     patrono: document.getElementById('patrono').value
                 };
 
+                const token = localStorage.getItem('access_token');
                 fetch('/api/professores', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
                     },
                     body: JSON.stringify(professor)
                 })

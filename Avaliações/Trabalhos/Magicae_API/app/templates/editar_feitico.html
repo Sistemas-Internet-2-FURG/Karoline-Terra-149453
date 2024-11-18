@@ -29,17 +29,22 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const feiticoId = window.location.pathname.split('/').pop(); // Obtém o ID do feitiço da URL
+            const feiticoId = window.location.pathname.split('/').pop(); 
+            const token = localStorage.getItem('access_token');
 
-            fetch(`/api/feiticos/${feiticoId}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('nome').value = data.nome;
-                    document.getElementById('descricao').value = data.descricao;
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar os dados do feitiço:', error);
-                });
+            fetch(`/api/feiticos/${feiticoId}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('nome').value = data.nome;
+                document.getElementById('descricao').value = data.descricao;
+            })
+            .catch(error => {
+                console.error('Erro ao carregar os dados do feitiço:', error);
+            });
 
             document.getElementById('editar-feitico-form').addEventListener('submit', function (e) {
                 e.preventDefault();
@@ -52,7 +57,8 @@
                 fetch(`/api/feiticos/${feiticoId}`, {
                     method: 'PUT',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
                     },
                     body: JSON.stringify(feitico)
                 })

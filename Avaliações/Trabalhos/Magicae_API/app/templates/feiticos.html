@@ -41,39 +41,59 @@
 
     <script>
         function carregarFeiticos() {
-            fetch('/api/feiticos')
-                .then(response => response.json())
-                .then(data => {
-                    const tabelaBody = document.getElementById('feiticos-tabela-body');
-                    tabelaBody.innerHTML = ''; 
+            const token = localStorage.getItem('access_token');
+            fetch('/api/feiticos', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar os feitiços: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tabelaBody = document.getElementById('feiticos-tabela-body');
+                tabelaBody.innerHTML = ''; 
 
-                    data.forEach(feitico => {
-                        const row = document.createElement('tr');
+                data.forEach(feitico => {
+                    const row = document.createElement('tr');
 
-                        row.innerHTML = `
-                            <td>${feitico.nome}</td>
-                            <td>${feitico.descricao}</td>
-                            {% if user_type == 'professor' %}
-                            <td>
-                                <a href="/editar_feitico/${feitico.id}">Editar</a>
-                                <button onclick="excluirFeitico(${feitico.id})">Excluir</button>
-                            </td>
-                            {% endif %}
-                        `;
-                        tabelaBody.appendChild(row);
-                    });
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar os feitiços:', error);
+                    row.innerHTML = `
+                        <td>${feitico.nome}</td>
+                        <td>${feitico.descricao}</td>
+                        {% if user_type == 'professor' %}
+                        <td>
+                            <a href="/editar_feitico/${feitico.id}">Editar</a>
+                            <button onclick="excluirFeitico(${feitico.id})">Excluir</button>
+                        </td>
+                        {% endif %}
+                    `;
+                    tabelaBody.appendChild(row);
                 });
+            })
+            .catch(error => {
+                console.error('Erro ao carregar os feitiços:', error);
+            });
         }
 
         function excluirFeitico(feiticoId) {
+            const token = localStorage.getItem('access_token');
             if (confirm('Tem certeza que deseja excluir este feitiço?')) {
                 fetch(`/api/feiticos/${feiticoId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao excluir feitiço: ' + response.statusText);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     alert('Feitiço excluído com sucesso!');
                     carregarFeiticos(); 

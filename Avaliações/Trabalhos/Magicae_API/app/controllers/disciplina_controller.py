@@ -1,8 +1,9 @@
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required
 from app import db
 from app.models import Disciplinas
-from datetime import datetime
 
+@jwt_required()
 def listar_disciplinas():
     disciplinas = Disciplinas.query.all()
     return jsonify([{
@@ -11,6 +12,19 @@ def listar_disciplinas():
         'descricao': disciplina.descricao,
     } for disciplina in disciplinas])
 
+@jwt_required()
+def obter_disciplina(disciplina_id):
+    disciplina = Disciplinas.query.get(disciplina_id)
+    if not disciplina:
+        return jsonify({'message': 'disciplina não encontrada'}), 404
+
+    return jsonify({
+        'id': disciplina.id,
+        'nome': disciplina.nome,
+        'descricao': disciplina.descricao
+    })
+
+@jwt_required()
 def adicionar_disciplina():
     data = request.get_json()
     novo_disciplina = Disciplinas(
@@ -21,6 +35,7 @@ def adicionar_disciplina():
     db.session.commit()
     return jsonify({'message': 'disciplina adicionado com sucesso!'})
 
+@jwt_required()
 def editar_disciplina(disciplina_id):
     data = request.get_json()
     disciplina = Disciplinas.query.get(disciplina_id)
@@ -32,6 +47,7 @@ def editar_disciplina(disciplina_id):
     db.session.commit()
     return jsonify({'message': 'disciplina editado com sucesso!'})
 
+@jwt_required()
 def excluir_disciplina(disciplina_id):
     disciplina = Disciplinas.query.get(disciplina_id)
     if not disciplina:
